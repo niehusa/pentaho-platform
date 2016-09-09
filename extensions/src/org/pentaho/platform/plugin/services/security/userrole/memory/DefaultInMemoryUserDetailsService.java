@@ -12,24 +12,31 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2013 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.platform.plugin.services.security.userrole.memory;
 
 import org.pentaho.platform.api.mt.ITenantedPrincipleNameResolver;
 import org.springframework.dao.DataAccessException;
-import org.springframework.security.userdetails.UserDetails;
-import org.springframework.security.userdetails.UsernameNotFoundException;
-import org.springframework.security.userdetails.memory.InMemoryDaoImpl;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class DefaultInMemoryUserDetailsService extends InMemoryDaoImpl {
+import java.util.Collection;
+import java.util.Collections;
+
+public class DefaultInMemoryUserDetailsService extends InMemoryUserDetailsManager {
 
   ITenantedPrincipleNameResolver userNameUtils;
 
   public DefaultInMemoryUserDetailsService( ITenantedPrincipleNameResolver userNameUtils ) {
-    super();
+    this( Collections.emptyList() );
     this.userNameUtils = userNameUtils;
+  }
+
+  public DefaultInMemoryUserDetailsService( Collection<UserDetails> users ) {
+    super( users );
   }
 
   @Override

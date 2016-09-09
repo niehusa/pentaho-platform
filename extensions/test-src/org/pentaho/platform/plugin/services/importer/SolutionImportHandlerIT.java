@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,8 +43,6 @@ import org.pentaho.platform.scheduler2.quartz.test.StubUserRoleListService;
 import org.pentaho.platform.scheduler2.ws.test.JaxWsSchedulerServiceIT.TestQuartzScheduler;
 import org.pentaho.platform.web.http.api.resources.JobScheduleRequest;
 import org.pentaho.test.platform.engine.core.MicroPlatform;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 public class SolutionImportHandlerIT extends Assert {
 

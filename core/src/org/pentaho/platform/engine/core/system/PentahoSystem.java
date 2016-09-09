@@ -13,7 +13,7 @@
  * See the GNU General Public License for more details.
  *
  *
- * Copyright 2006 - 2013 Pentaho Corporation.  All rights reserved.
+ * Copyright 2006 - 2016 Pentaho Corporation.  All rights reserved.
  */
 
 package org.pentaho.platform.engine.core.system;
@@ -55,10 +55,6 @@ import org.pentaho.platform.api.engine.IPentahoRegistrableObjectFactory;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.IPentahoSystemListener;
 import org.pentaho.platform.api.engine.IPentahoUrlFactory;
-import org.pentaho.platform.api.engine.IPlatformPlugin;
-import org.pentaho.platform.api.engine.IPlatformReadyListener;
-import org.pentaho.platform.api.engine.IPluginManager;
-import org.pentaho.platform.api.engine.IPluginProvider;
 import org.pentaho.platform.api.engine.IRuntimeContext;
 import org.pentaho.platform.api.engine.IServerStatusProvider;
 import org.pentaho.platform.api.engine.ISessionStartupAction;
@@ -67,24 +63,22 @@ import org.pentaho.platform.api.engine.ISystemConfig;
 import org.pentaho.platform.api.engine.ISystemSettings;
 import org.pentaho.platform.api.engine.ObjectFactoryException;
 import org.pentaho.platform.api.engine.PentahoSystemException;
-import org.pentaho.platform.api.engine.PlatformPluginRegistrationException;
 import org.pentaho.platform.engine.core.messages.Messages;
 import org.pentaho.platform.engine.core.output.SimpleOutputHandler;
 import org.pentaho.platform.engine.core.solution.PentahoSessionParameterProvider;
 import org.pentaho.platform.engine.core.solution.SimpleParameterProvider;
 import org.pentaho.platform.engine.core.system.objfac.AggregateObjectFactory;
 import org.pentaho.platform.engine.core.system.objfac.OSGIRuntimeObjectFactory;
-import org.pentaho.platform.engine.core.system.status.PeriodicStatusLogger;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.util.logging.Logger;
 import org.pentaho.platform.util.messages.LocaleHelper;
 import org.pentaho.platform.util.web.SimpleUrlFactory;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.GrantedAuthorityImpl;
-import org.springframework.security.context.SecurityContext;
-import org.springframework.security.context.SecurityContextHolder;
-import org.springframework.security.providers.UsernamePasswordAuthenticationToken;
-import org.springframework.security.userdetails.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 
 public class PentahoSystem {
 
@@ -94,7 +88,7 @@ public class PentahoSystem {
 
   public static final boolean ignored = false; // used to suppress compiler
   private static final String securityContextHolderStrategy =
-      "org.pentaho.platform.engine.security.PentahoSecurityContextHolderStrategy";
+    SecurityContextHolder.MODE_INHERITABLETHREADLOCAL;
   public static final String JAVA_SYSTEM_PROPERTIES = "java-system-properties";
 
   public static int loggingLevel = ILogger.ERROR;
@@ -187,7 +181,7 @@ public class PentahoSystem {
       .decorate( PentahoSystem.ACLFileExtensionList );
 
   private static final List logoutListeners = Collections.synchronizedList( new ArrayList() );
-  
+
   private static final IServerStatusProvider serverStatusProvider = IServerStatusProvider.LOCATOR.getProvider();
 
   // TODO even if logging is not configured messages need to make it out to
@@ -219,7 +213,7 @@ public class PentahoSystem {
     aggObjectFactory.registerObjectFactory( PentahoSystem.runtimeObjectFactory );
   }
 
-  public static void setBundleContext( BundleContext context ){
+  public static void setBundleContext( BundleContext context ) {
     runtimeObjectFactory.setBundleContext( context );
   }
 
@@ -241,7 +235,7 @@ public class PentahoSystem {
       // tests call init more than once without an intervening shutdown().
       try {
         throw new IllegalStateException( "'Init' method was run twice without 'shutdown'" );
-      } catch( IllegalStateException e ) {
+      } catch ( IllegalStateException e ) {
         Logger.error( PentahoSystem.class,
             "PentahoSystem was already initialized when init() called again without a preceding shutdown(). "
                 + "This is likely in error", e );
@@ -249,7 +243,7 @@ public class PentahoSystem {
     }
 
     PentahoSystem.initializedStatus = PentahoSystem.SYSTEM_INITIALIZED_OK;
-    
+
     // PDI-3438 Scheduled job fails to open a transformation
     // Kettle jobs spawn threads which may require authentication to load transformations from
     // the kettle repository, by using the INHERITABLETHREADLOCAL strategy, spawned threads will
@@ -350,7 +344,7 @@ public class PentahoSystem {
     if ( debug ) {
       Logger.debug( PentahoSystem.class, "PentahoSystem Init Complete" ); //$NON-NLS-1$
     }
-    
+
     return true;
   }
 
@@ -394,13 +388,13 @@ public class PentahoSystem {
       session.setAuthenticated( name );
       // create authentication
 
-      GrantedAuthority[] roles;
+      List<GrantedAuthority> roles;
 
       ISystemSettings settings = PentahoSystem.getSystemSettings();
       String roleName = ( settings != null ) ? settings.getSystemSetting( "acl-voter/admin-role", "Admin" ) : "Admin";
 
-      roles = new GrantedAuthority[1];
-      roles[0] = new GrantedAuthorityImpl( roleName );
+      roles = new ArrayList<GrantedAuthority>();
+      roles.add( new SimpleGrantedAuthority( roleName ) );
 
       User user = new User( name, "", true, true, true, true, roles );
       UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken( user, "", roles ); //$NON-NLS-1$
@@ -534,7 +528,7 @@ public class PentahoSystem {
 
   private static void setSystemProperties() {
     ISystemConfig systemConfig = PentahoSystem.get( ISystemConfig.class );
-    if( systemConfig == null ){
+    if ( systemConfig == null ) {
       return;
     }
     final IConfiguration configuration = systemConfig.getConfiguration( JAVA_SYSTEM_PROPERTIES );

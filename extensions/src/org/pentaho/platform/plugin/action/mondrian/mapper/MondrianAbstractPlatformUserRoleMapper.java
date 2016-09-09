@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2013 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.platform.plugin.action.mondrian.mapper;
@@ -39,9 +39,9 @@ import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianCatalog;
 import org.pentaho.platform.plugin.action.mondrian.catalog.MondrianSchema;
 import org.pentaho.platform.plugin.action.olap.IOlapService;
 import org.pentaho.platform.plugin.services.importexport.legacy.MondrianCatalogRepositoryHelper;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 /**
@@ -153,7 +153,7 @@ public abstract class MondrianAbstractPlatformUserRoleMapper implements IConnect
     GrantedAuthority[] gAuths = (GrantedAuthority[]) session.getAttribute( IPentahoSession.SESSION_ROLES );
     if ( gAuths == null ) {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      gAuths = authentication.getAuthorities();
+      gAuths = authentication.getAuthorities().toArray( new GrantedAuthority[]{} );
       Assert.state( authentication != null );
     }
 

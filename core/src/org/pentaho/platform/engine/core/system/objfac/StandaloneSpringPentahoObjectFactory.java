@@ -13,7 +13,7 @@
  * See the GNU General Public License for more details.
  *
  *
- * Copyright 2006 - 2013 Pentaho Corporation.  All rights reserved.
+ * Copyright 2006 - 2016 Pentaho Corporation.  All rights reserved.
  */
 
 package org.pentaho.platform.engine.core.system.objfac;
@@ -24,14 +24,10 @@ import org.pentaho.platform.engine.core.system.objfac.spring.PentahoBeanScopeVal
 import org.pentaho.platform.engine.core.system.objfac.spring.SpringScopeSessionHolder;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.io.FileSystemResource;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +70,7 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
       appCtx.getBeanFactory().registerScope( "session", sessionScope );
 
       beanFactory = appCtx;
-      //appCtx.refresh();
+      appCtx.refresh();
     } else {
       if ( !( context instanceof ConfigurableApplicationContext ) ) {
         String msg =

@@ -12,22 +12,19 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2013 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.test.platform.engine.security;
 
-import org.pentaho.platform.api.engine.IAclHolder;
-import org.pentaho.platform.api.engine.IAclSolutionFile;
-import org.pentaho.platform.api.engine.IAclVoter;
 import org.pentaho.platform.api.engine.IParameterProvider;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.engine.ISecurityHelper;
 import org.pentaho.platform.api.engine.ISolutionFile;
 import org.pentaho.platform.engine.core.system.PentahoSystem;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Stack;
 import java.util.concurrent.Callable;
@@ -61,7 +58,7 @@ public class MockSecurityHelper implements ISecurityHelper {
   }
 
   public <T> T
-  runAsUser( final String principalName, final IParameterProvider paramProvider, final Callable<T> callable )
+    runAsUser( final String principalName, final IParameterProvider paramProvider, final Callable<T> callable )
     throws Exception {
     becomeUser( principalName );
     return callable.call();
@@ -72,11 +69,6 @@ public class MockSecurityHelper implements ISecurityHelper {
     return callable.call();
   }
 
-  public boolean isPentahoAdministrator( final IPentahoSession session ) {
-    IAclVoter voter = PentahoSystem.get( IAclVoter.class );
-    return voter.isPentahoAdministrator( session );
-  }
-
   public boolean isGranted( final IPentahoSession session, final GrantedAuthority role ) {
     return false;
   }
@@ -85,11 +77,7 @@ public class MockSecurityHelper implements ISecurityHelper {
     return false;
   }
 
-  public boolean hasAccess( final IAclHolder aHolder, final int actionOperation, final IPentahoSession session ) {
-    return false;
-  }
-
-  public boolean hasAccess( final IAclSolutionFile aFile, final int actionOperation, final IPentahoSession session ) {
+  public boolean hasAccess( final int actionOperation, final IPentahoSession session ) {
     return false;
   }
 

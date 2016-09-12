@@ -12,7 +12,7 @@
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
  *
- * Copyright (c) 2002-2013 Pentaho Corporation..  All rights reserved.
+ * Copyright (c) 2002-2016 Pentaho Corporation..  All rights reserved.
  */
 
 package org.pentaho.platform.plugin.services.metadata;
@@ -26,15 +26,15 @@ import org.pentaho.metadata.model.LogicalModel;
 import org.pentaho.metadata.model.concept.IConcept;
 import org.pentaho.metadata.model.concept.security.RowLevelSecurity;
 import org.pentaho.metadata.util.RowLevelSecurityHelper;
-import org.pentaho.platform.api.engine.IAclHolder;
 import org.pentaho.platform.api.engine.IPentahoSession;
 import org.pentaho.platform.api.repository2.unified.IUnifiedRepository;
 import org.pentaho.platform.engine.core.system.PentahoSessionHolder;
 import org.pentaho.platform.engine.security.SecurityHelper;
 import org.pentaho.platform.plugin.services.messages.Messages;
-import org.springframework.security.Authentication;
-import org.springframework.security.GrantedAuthority;
-import org.springframework.security.context.SecurityContextHolder;
+import org.pentaho.platform.web.http.api.resources.utils.SystemUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * This is the platform implementation which implements security. NOTE: this class will be moved after integration
@@ -44,9 +44,9 @@ import org.springframework.security.context.SecurityContextHolder;
  */
 public class SecurityAwarePentahoMetadataDomainRepository extends PentahoMetadataDomainRepository {
   private static final Log logger = LogFactory.getLog( SecurityAwarePentahoMetadataDomainRepository.class );
-  public static final int[] ACCESS_TYPE_MAP = new int[]{IAclHolder.ACCESS_TYPE_READ, IAclHolder.ACCESS_TYPE_WRITE,
+  public static final int[] ACCESS_TYPE_MAP = new int[]{ /* IAclHolder.ACCESS_TYPE_READ, IAclHolder.ACCESS_TYPE_WRITE,
     IAclHolder.ACCESS_TYPE_UPDATE, IAclHolder.ACCESS_TYPE_DELETE, IAclHolder.ACCESS_TYPE_ADMIN,
-    IAclHolder.ACCESS_TYPE_ADMIN};
+    IAclHolder.ACCESS_TYPE_ADMIN */ 0, 1 , 2 , 3 /* TODO WARNING: MOCK VALUES */ };
 
   public SecurityAwarePentahoMetadataDomainRepository( final IUnifiedRepository repository ) {
     super( repository );
@@ -84,9 +84,9 @@ public class SecurityAwarePentahoMetadataDomainRepository extends PentahoMetadat
     if ( aclHolder != null ) {
       PentahoMetadataAclHolder newHolder = new PentahoMetadataAclHolder( aclHolder );
       int mappedActionOperation = ACCESS_TYPE_MAP[accessType];
-      result = SecurityHelper.getInstance().hasAccess( newHolder, mappedActionOperation, getSession() );
+      result = /* SecurityHelper.getInstance().hasAccess( newHolder, mappedActionOperation, getSession() ) TODO */ true;
     } else if ( accessType == ACCESS_TYPE_SCHEMA_ADMIN ) {
-      result = SecurityHelper.getInstance().isPentahoAdministrator( getSession() );
+      result = SystemUtils.canAdminister();
     }
     return result;
   }

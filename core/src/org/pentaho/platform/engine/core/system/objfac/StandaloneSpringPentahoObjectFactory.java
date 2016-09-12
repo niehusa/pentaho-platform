@@ -63,6 +63,8 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
     if ( context == null ) {
       // beanFactory = new FileSystemXmlApplicationContext(configFile);
       FileSystemXmlApplicationContext appCtx = new FileSystemXmlApplicationContext( configFile );
+      appCtx.refresh();
+
       appCtx.addBeanFactoryPostProcessor( new PentahoBeanScopeValidatorPostProcessor() );
       Scope requestScope = new ThreadLocalScope();
       appCtx.getBeanFactory().registerScope( "request", requestScope );
@@ -70,7 +72,6 @@ public class StandaloneSpringPentahoObjectFactory extends AbstractSpringPentahoO
       appCtx.getBeanFactory().registerScope( "session", sessionScope );
 
       beanFactory = appCtx;
-      appCtx.refresh();
     } else {
       if ( !( context instanceof ConfigurableApplicationContext ) ) {
         String msg =

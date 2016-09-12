@@ -121,7 +121,7 @@ public class SecurityHelperTest {
 
     boolean roleWasFound = false;
     for ( GrantedAuthority authElem : auth.getAuthorities() ) {
-      if ( authElem != null && authElem.equals( ANONIMOUS_ROLE ) ) {
+      if ( authElem != null && ANONIMOUS_ROLE.equals( authElem.getAuthority() ) ) {
         roleWasFound = true;
         break;
       }

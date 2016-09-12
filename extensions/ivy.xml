@@ -85,6 +85,8 @@
     <dependency org="javax.jcr" name="jcr" rev="2.0" transitive="false"/>
     <dependency org="org.apache.geronimo.specs" name="geronimo-stax-api_1.0_spec" rev="1.0" transitive="false"/>
     <dependency org="org.springframework.security" name="spring-security-core" rev="${dependency.spring.security.revision}" transitive="false"/>
+    <dependency org="org.springframework.security" name="spring-security-web" rev="${dependency.spring.security.revision}" transitive="false"/>
+    <dependency org="org.springframework.security" name="spring-security-ldap" rev="${dependency.spring.security.revision}" transitive="false"/>
     <dependency org="org.springframework.ldap" name="spring-ldap-core" rev="${dependency.spring.ldap.revision}" transitive="false"/>
     <dependency org="javax.mail" name="mail" rev="1.4.1" transitive="false"/>
 
@@ -383,8 +385,11 @@
     <!-- Necessary because Pentaho's security tests re-use Spring's Security test classes. -->
     <dependency org="org.springframework.security" name="spring-security-core-tests" rev="${dependency.spring.security.tests.revision}"
                 transitive="false" conf="test->default"/>
-    <dependency org="org.apache.directory.server" name="apacheds-core" rev="1.0.2" conf="test->default"/>
-    <dependency org="org.apache.directory.server" name="apacheds-server-jndi" rev="1.0.2" conf="test->default">
+    <dependency org="org.springframework.ldap" name="spring-ldap-core" rev="${dependency.spring.ldap.revision}" transitive="false" conf="test->default"/>
+    <dependency org="org.apache.directory.server" name="apacheds-core" rev="${dependency.apacheds.revision}" transitive="false" conf="test->default"/>
+    <dependency org="org.apache.directory.server" name="apacheds-core-entry" rev="${dependency.apacheds.revision}" transitive="false" conf="test->default"/>
+    <dependency org="org.apache.directory.shared" name="shared-ldap" rev="${dependency.apacheds.shared.revision}" transitive="false" conf="test->default"/>
+    <dependency org="org.apache.directory.server" name="apacheds-server-jndi" rev="${dependency.apacheds.revision}" transitive="false" conf="test->default">
       <exclude org="org.slf4j" name="slf4j-api"/>
     </dependency>
     <!-- end security test dependencies -->
@@ -407,16 +412,6 @@
     <dependency org="com.sun.jersey.contribs" name="jersey-multipart" rev="1.19.1" conf="test->default" transitive="false"/>
 
     <dependency org="org.springframework" name="spring-test" rev="${dependency.spring.framework.revision}" conf="test->default"/>
-
-    <dependency org="org.springframework" name="spring-mock" rev="${dependency.spring.mock.revision}" conf="test->default">
-      <!--
-           prevent Spring from grabbing these jars. We are already getting the versions we need in our default
-           configuration
-         -->
-      <exclude org="javax.servlet" name="servlet-api"/>
-      <exclude org="avalon-framework" name="avalon-framework"/>
-      <exclude org="log4j" name="log4j"/>
-    </dependency>
 
     <dependency org="com.sun.jersey.contribs" name="wadl-resourcedoc-doclet" rev="1.19.1" transitive="false" />
 
